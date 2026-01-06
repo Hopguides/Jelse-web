@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Digitalna revitalizacija Dvorca Jelšingrad. Spoznajte slovensko Alhambro skozi oči barona Rudolfa v interaktivnem digitalnem doživetju.">
+    <meta name="keywords"
+        content="Jelšingrad, Dvorec, Šmarje pri Jelšah, Digitalna kulturna dediščina, Mavrski slog, Turizem">
+    <meta name="author" content="Projekt Jelšingrad Digital">
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Dvorec Jelšingrad - Slovenska Alhambra">
+    <meta property="og:description"
+        content="Edinstveno imerzivno doživetje v edinem mavrskem dvorcu v Sloveniji. Raziščite zgodovino z AI baronom Rudolfom.">
+
+    <!-- Favicon (Emoji as icon) -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏰</text></svg>">
+
+    <title>Dvorec Jelšingrad | Digitalna Revitalizacija</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+        :root {
+            --color-sand: #fdfcf0;
+            --color-gold: #c5a059;
+            --color-dark: #2c241b;
+            --color-accent: #8b5a2b;
+            --color-stone: #e5e2d9;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--color-sand);
+            color: var(--color-dark);
+            scroll-behavior: smooth;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        .oriental-pattern {
+            background-image: radial-gradient(var(--color-gold) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--color-gold);
+            transform: translateX(-50%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-sand);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-gold);
+            border-radius: 4px;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 3D Flip Effects */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .style-preserve-3d {
+            transform-style: preserve-3d;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-[#fdfcf0]/95 backdrop-blur-sm border-b border-[#c5a059]/30 shadow-sm transition-all duration-300 no-print"
+        id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <span class="text-2xl font-bold text-[#2c241b] font-serif tracking-wider">Jelšingrad<span
+                            class="text-[#c5a059]">.Digital</span></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <button onclick="scrollToSection('vizija')"
+                            class="hover:text-[#8b5a2b] px-3 py-2 rounded-md text-sm font-medium transition-colors">Vizija</button>
+                        <button onclick="scrollToSection('zgodovina')"
+                            class="hover:text-[#8b5a2b] px-3 py-2 rounded-md text-sm font-medium transition-colors">Zgodovina</button>
+                        <button onclick="scrollToSection('baron')"
+                            class="hover:text-[#8b5a2b] px-3 py-2 rounded-md text-sm font-medium transition-colors">AI
+                            Baron</button>
+                        <button onclick="scrollToSection('dozivetje')"
+                            class="hover:text-[#8b5a2b] px-3 py-2 rounded-md text-sm font-medium transition-colors">5
+                            Postaj</button>
+                        <button onclick="scrollToSection('izvedba')"
+                            class="bg-[#2c241b] text-[#fdfcf0] hover:bg-[#8b5a2b] px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-md">Izvedbeni
+                            Načrt</button>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button onclick="toggleMobileMenu()"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-[#2c241b] hover:text-[#8b5a2b] focus:outline-none"
+                        aria-label="Menu">
+                        <span class="text-2xl">☰</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="hidden md:hidden bg-[#fdfcf0] border-b border-[#c5a059]" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button onclick="scrollToSection('vizija')"
+                    class="block w-full text-left hover:bg-[#e5e2d9] px-3 py-2 rounded-md text-base font-medium">Vizija</button>
+                <button onclick="scrollToSection('zgodovina')"
+                    class="block w-full text-left hover:bg-[#e5e2d9] px-3 py-2 rounded-md text-base font-medium">Zgodovina</button>
+                <button onclick="scrollToSection('baron')"
+                    class="block w-full text-left hover:bg-[#e5e2d9] px-3 py-2 rounded-md text-base font-medium">AI
+                    Baron</button>
+                <button onclick="scrollToSection('dozivetje')"
+                    class="block w-full text-left hover:bg-[#e5e2d9] px-3 py-2 rounded-md text-base font-medium">Doživetje</button>
+                <button onclick="scrollToSection('izvedba')"
+                    class="block w-full text-left hover:bg-[#e5e2d9] px-3 py-2 rounded-md text-base font-medium">Izvedba</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="vizija" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="absolute inset-0 oriental-pattern z-0"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h2 class="text-[#8b5a2b] font-semibold tracking-widest uppercase text-sm mb-4">Projektna Študija & Predlog
+            </h2>
+            <h1 class="text-5xl md:text-7xl font-bold text-[#2c241b] font-serif mb-6 leading-tight">
+                Slovenska Alhambra <br /> <span class="text-[#c5a059] italic">Oživi Digitalno</span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-600 font-light">
+                Digitalna revitalizacija Dvorca Jelšingrad skozi oči barona Rudolfa.
+                Edinstveno imerzivno doživetje, ki združuje orientalsko romantiko in sodobno tehnologijo.
+            </p>
+            <div class="mt-10 flex justify-center gap-4">
+                <button onclick="scrollToSection('dozivetje')"
+                    class="px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-[#8b5a2b] hover:bg-[#704822] shadow-lg transition-transform hover:-translate-y-1">
+                    Razišči Koncept
+                </button>
+                <button onclick="scrollToSection('izvedba')"
+                    class="px-8 py-3 border border-[#2c241b] text-base font-medium rounded-md text-[#2c241b] bg-transparent hover:bg-[#e5e2d9] transition-transform hover:-translate-y-1">
+                    Tehnični Podatki
+                </button>
+            </div>
+
+            <!-- Quick Stats Grid -->
+            <div class="mt-16 grid grid-cols-1 gap-5 sm:grid-cols-3 lg:grid-cols-3 max-w-4xl mx-auto">
+                <div class="bg-white/80 p-6 rounded-lg shadow-sm border border-[#e5e2d9]">
+                    <div class="text-3xl font-bold text-[#c5a059]">2026</div>
+                    <div class="text-sm text-gray-500 uppercase tracking-wide mt-1">Cilj Revitalizacije</div>
+                </div>
+                <div class="bg-white/80 p-6 rounded-lg shadow-sm border border-[#e5e2d9]">
+                    <div class="text-3xl font-bold text-[#c5a059]">Edini</div>
+                    <div class="text-sm text-gray-500 uppercase tracking-wide mt-1">Mavrski Dvorec v SLO</div>
+                </div>
+                <div class="bg-white/80 p-6 rounded-lg shadow-sm border border-[#e5e2d9]">
+                    <div class="text-3xl font-bold text-[#c5a059]">AI</div>
+                    <div class="text-sm text-gray-500 uppercase tracking-wide mt-1">Personaliziran Vodnik</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- History Timeline Section -->
+    <section id="zgodovina" class="py-20 bg-[#f7f5eb]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#2c241b]">Geneza Orienta na Štajerskem</h2>
+                <p class="mt-4 text-gray-600 max-w-2xl mx-auto">
+                    Od srednjeveškega dvora do diplomatske vizije. Razumevanje plasti zgodovine je ključno za digitalno
+                    rekonstrukcijo.
+                </p>
+            </div>
+
+            <div class="relative max-w-4xl mx-auto">
+                <div class="timeline-line hidden md:block"></div>
+
+                <div class="space-y-12">
+                    <!-- Event 1 -->
+                    <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                        <div class="order-1 w-full md:w-5/12 bg-white p-6 rounded-lg shadow-md border-l-4 border-[#c5a059] card-hover cursor-pointer"
+                            onclick="updateDetail('1424')">
+                            <h3 class="text-xl font-serif font-bold text-[#2c241b]">1424: Erlach</h3>
+                            <p class="text-sm text-gray-500 mt-2">Prva omemba. Dvor Celjskih grofov, kasneje
+                                deželnoknežja posest "Jelsche".</p>
+                        </div>
+                        <div
+                            class="z-10 flex items-center order-1 bg-[#2c241b] shadow-xl w-10 h-10 rounded-full justify-center text-[#fdfcf0] font-bold my-4 md:my-0">
+                            1</div>
+                        <div class="order-1 w-full md:w-5/12 md:text-left"></div>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                        <div class="order-1 w-full md:w-5/12 md:text-right"></div>
+                        <div
+                            class="z-10 flex items-center order-1 bg-[#2c241b] shadow-xl w-10 h-10 rounded-full justify-center text-[#fdfcf0] font-bold my-4 md:my-0">
+                            2</div>
+                        <div class="order-1 w-full md:w-5/12 bg-white p-6 rounded-lg shadow-md border-r-4 border-[#8b5a2b] card-hover cursor-pointer"
+                            onclick="updateDetail('1666')">
+                            <h3 class="text-xl font-serif font-bold text-[#2c241b]">1666: Baročna Era</h3>
+                            <p class="text-sm text-gray-500 mt-2">Baron Žiga Gaisruck preobrazi uničen dvor v baročni
+                                dvorec. Nastavek za park in avlo.</p>
+                        </div>
+                    </div>
+
+                    <!-- Event 3 -->
+                    <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                        <div class="order-1 w-full md:w-5/12 bg-white p-6 rounded-lg shadow-md border-l-4 border-[#c5a059] card-hover cursor-pointer"
+                            onclick="updateDetail('1845')">
+                            <h3 class="text-xl font-serif font-bold text-[#2c241b]">1845–1860: Era Gödlov</h3>
+                            <p class="text-sm text-gray-500 mt-2">Rudolf Oskar Gödel, diplomat v Egiptu in Bejrutu,
+                                začne prenovo v neomavrskem slogu. "Zlata doba".</p>
+                        </div>
+                        <div
+                            class="z-10 flex items-center order-1 bg-[#2c241b] shadow-xl w-10 h-10 rounded-full justify-center text-[#fdfcf0] font-bold my-4 md:my-0">
+                            3</div>
+                        <div class="order-1 w-full md:w-5/12 md:text-left"></div>
+                    </div>
+
+                    <!-- Event 4 -->
+                    <div class="relative flex flex-col md:flex-row items-center justify-between group">
+                        <div class="order-1 w-full md:w-5/12 md:text-right"></div>
+                        <div
+                            class="z-10 flex items-center order-1 bg-[#2c241b] shadow-xl w-10 h-10 rounded-full justify-center text-[#fdfcf0] font-bold my-4 md:my-0">
+                            4</div>
+                        <div class="order-1 w-full md:w-5/12 bg-white p-6 rounded-lg shadow-md border-r-4 border-[#8b5a2b] card-hover cursor-pointer"
+                            onclick="updateDetail('2022')">
+                            <h3 class="text-xl font-serif font-bold text-[#2c241b]">2022: Preporod</h3>
+                            <p class="text-sm text-gray-500 mt-2">Občina Šmarje pri Jelšah odkupi dvorec. Začetek
+                                celovite obnove in digitalne vizije.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Box (Dynamic) -->
+                <div id="history-detail"
+                    class="mt-12 bg-[#2c241b] text-[#fdfcf0] p-6 rounded-lg shadow-lg text-center transition-all duration-500 opacity-0 h-0 overflow-hidden">
+                    <h4 id="detail-title" class="text-xl font-serif font-bold mb-2"></h4>
+                    <p id="detail-desc" class="text-sm font-light leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Persona Section -->
+    <section id="baron" class="py-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[#e5e2d9] opacity-30"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+                <!-- Left: Description -->
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#2c241b] mb-6">Protagonist: Baron Rudolf
+                    </h2>
+                    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                        Za razliko od suhoparnih avdio vodnikov, Jelšingrad potrebuje dušo. Osebnost, ki uteleša
+                        melanholijo in eksotiko 19. stoletja.
+                    </p>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-[#c5a059] mb-6">
+                        <h4 class="font-bold text-[#8b5a2b] uppercase text-xs tracking-wider mb-2">Ključni Citati & Hook
+                        </h4>
+                        <p class="italic font-serif text-xl text-[#2c241b]">"Per amore ti ho creato, per amore ti
+                            conservo."</p>
+                        <p class="text-sm text-gray-500 mt-2">("Za ljubezen sem te ustvaril, za ljubezen te ohranjam")
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-[#2c241b]">Psihološki Profil AI:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-[#2c241b] text-[#fdfcf0] rounded-full text-sm">Melanholičen</span>
+                            <span class="px-3 py-1 bg-[#c5a059] text-white rounded-full text-sm">Svetovljan</span>
+                            <span class="px-3 py-1 bg-[#8b5a2b] text-white rounded-full text-sm">Estet</span>
+                            <span class="px-3 py-1 bg-gray-600 text-white rounded-full text-sm">Skrivnosten</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Interactive Card -->
+                <div class="relative group perspective-1000">
+                    <div id="persona-card"
+                        class="relative w-full h-[500px] bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-700 transform style-preserve-3d border border-[#c5a059]">
+
+                        <!-- Front: Historical Facts -->
+                        <div id="card-front"
+                            class="absolute inset-0 p-8 flex flex-col items-center justify-center bg-[#fdfcf0]">
+                            <div
+                                class="w-32 h-32 rounded-full bg-[#e5e2d9] mb-6 flex items-center justify-center border-4 border-[#c5a059]">
+                                <span class="text-4xl">🎩</span>
+                            </div>
+                            <h3 class="text-2xl font-serif font-bold text-[#2c241b] mb-2">Rudolf Oskar Gödel</h3>
+                            <p class="text-center text-sm text-gray-500 mb-6 uppercase tracking-widest">Zgodovinska
+                                Osebnost</p>
+                            <ul class="text-sm text-gray-700 space-y-3 w-full">
+                                <li class="flex justify-between border-b border-gray-200 pb-2">
+                                    <span>Rojen:</span> <span class="font-bold">1813</span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-200 pb-2">
+                                    <span>Kariera:</span> <span class="font-bold">Konzul (Kairo, Bejrut)</span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-200 pb-2">
+                                    <span>Dediščina:</span> <span class="font-bold">Zbiratelj starin</span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-200 pb-2">
+                                    <span>Vizija:</span> <span class="font-bold">Gesamtkunstwerk</span>
+                                </li>
+                            </ul>
+                            <button onclick="flipCard()"
+                                class="mt-8 px-6 py-2 bg-[#2c241b] text-[#fdfcf0] rounded-full hover:bg-[#8b5a2b] transition-colors">Spoznaj
+                                AI Persono ↻</button>
+                        </div>
+
+                        <!-- Back: AI Persona Voice -->
+                        <div id="card-back"
+                            class="absolute inset-0 p-8 flex flex-col items-center justify-center bg-[#2c241b] text-[#fdfcf0] transform rotate-y-180 opacity-0 pointer-events-none transition-opacity duration-300">
+                            <div
+                                class="w-32 h-32 rounded-full bg-[#8b5a2b] mb-6 flex items-center justify-center border-4 border-[#c5a059] animate-pulse">
+                                <span class="text-4xl">🤖</span>
+                            </div>
+                            <h3 class="text-2xl font-serif font-bold text-[#c5a059] mb-2">Baron AI</h3>
+                            <p class="text-center text-sm text-gray-400 mb-6 uppercase tracking-widest">Tone of Voice:
+                                Skrivnosten</p>
+                            <div class="bg-white/10 p-4 rounded-lg italic text-sm mb-6 relative">
+                                <span class="absolute top-0 left-2 text-4xl text-[#c5a059] opacity-50">"</span>
+                                Dobrodošli, popotnik. Ne, niste zašli v Maroko. Še vedno ste na Štajerskem. A to, kar
+                                vidite, je moj spomin na dežele, kjer sonce zahaja v barvi ognja...
+                                <span class="absolute bottom-0 right-2 text-4xl text-[#c5a059] opacity-50">"</span>
+                            </div>
+                            <button onclick="flipCard()"
+                                class="mt-4 px-6 py-2 bg-[#fdfcf0] text-[#2c241b] rounded-full hover:bg-[#c5a059] transition-colors">Nazaj
+                                na Dejstva ↻</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The 5 Stations Experience -->
+    <section id="dozivetje" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#8b5a2b] font-bold tracking-widest uppercase text-sm">Content Strategy</span>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#2c241b] mt-2">5 Postaj Digitalnega Doživetja
+                </h2>
+                <p class="mt-4 text-gray-600 max-w-2xl mx-auto">
+                    Strukturiran sprehod skozi čas in prostor, podprt z AR, VR in geolokacijskim pripovedovanjem.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Station 1 -->
+                <div
+                    class="bg-[#fdfcf0] rounded-xl overflow-hidden shadow-sm border border-[#e5e2d9] group hover:border-[#c5a059] transition-all duration-300">
+                    <div class="h-48 bg-[#2c241b] relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 bg-[#000] opacity-40"></div>
+                        <span class="relative text-5xl z-10">🌙</span> <!-- Placeholder for Facade -->
+                        <div class="absolute top-4 right-4 bg-[#c5a059] text-white text-xs font-bold px-2 py-1 rounded">
+                            AR</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-[#2c241b] mb-2">1. Vrata v Orient</h3>
+                        <p class="text-sm text-gray-600 mb-4">Baron Rudolf razloži "mavrsko" fasado.</p>
+                        <div class="border-t border-gray-200 pt-4">
+                            <span class="text-xs font-bold text-[#8b5a2b] uppercase">Tehnologija:</span>
+                            <p class="text-xs text-gray-500 mt-1">AR rekonstrukcija polmesecov na stolpičih.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Station 2 -->
+                <div
+                    class="bg-[#fdfcf0] rounded-xl overflow-hidden shadow-sm border border-[#e5e2d9] group hover:border-[#c5a059] transition-all duration-300">
+                    <div class="h-48 bg-[#8b5a2b] relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 bg-[#000] opacity-40"></div>
+                        <span class="relative text-5xl z-10">📜</span>
+                        <div class="absolute top-4 right-4 bg-[#c5a059] text-white text-xs font-bold px-2 py-1 rounded">
+                            SCAN</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-[#2c241b] mb-2">2. Skrivnost Ljubezni</h3>
+                        <p class="text-sm text-gray-600 mb-4">Interpretacija napisa "Per amore...".</p>
+                        <div class="border-t border-gray-200 pt-4">
+                            <span class="text-xs font-bold text-[#8b5a2b] uppercase">Tehnologija:</span>
+                            <p class="text-xs text-gray-500 mt-1">Image recognition napisa + Kaligrafska animacija.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Station 3 -->
+                <div
+                    class="bg-[#fdfcf0] rounded-xl overflow-hidden shadow-sm border border-[#e5e2d9] group hover:border-[#c5a059] transition-all duration-300">
+                    <div class="h-48 bg-[#c5a059] relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 bg-[#000] opacity-40"></div>
+                        <span class="relative text-5xl z-10">🎪</span>
+                        <div class="absolute top-4 right-4 bg-[#c5a059] text-white text-xs font-bold px-2 py-1 rounded">
+                            VR/360</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-[#2c241b] mb-2">3. Dvorana Spominov</h3>
+                        <p class="text-sm text-gray-600 mb-4">Interier z izgubljenimi mumijami in freskami.</p>
+                        <div class="border-t border-gray-200 pt-4">
+                            <span class="text-xs font-bold text-[#8b5a2b] uppercase">Tehnologija:</span>
+                            <p class="text-xs text-gray-500 mt-1">360° pogled trenutnega stanja + VR overlay originalne
+                                opreme (1880).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Station 4 -->
+                <div
+                    class="bg-[#fdfcf0] rounded-xl overflow-hidden shadow-sm border border-[#e5e2d9] group hover:border-[#c5a059] transition-all duration-300">
+                    <div class="h-48 bg-[#5d4037] relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 bg-[#000] opacity-40"></div>
+                        <span class="relative text-5xl z-10">✒️</span>
+                        <div class="absolute top-4 right-4 bg-[#c5a059] text-white text-xs font-bold px-2 py-1 rounded">
+                            AUDIO</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-[#2c241b] mb-2">4. Pesnikova Soba</h3>
+                        <p class="text-sm text-gray-600 mb-4">Anton Aškerc in "Stara pravda".</p>
+                        <div class="border-t border-gray-200 pt-4">
+                            <span class="text-xs font-bold text-[#8b5a2b] uppercase">Tehnologija:</span>
+                            <p class="text-xs text-gray-500 mt-1">Zvočna krajina (Soundscape) z recitacijo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Station 5 -->
+                <div
+                    class="bg-[#fdfcf0] rounded-xl overflow-hidden shadow-sm border border-[#e5e2d9] group hover:border-[#c5a059] transition-all duration-300">
+                    <div class="h-48 bg-[#4a5d23] relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 bg-[#000] opacity-40"></div>
+                        <span class="relative text-5xl z-10">🌲</span>
+                        <div class="absolute top-4 right-4 bg-[#c5a059] text-white text-xs font-bold px-2 py-1 rounded">
+                            AI CAM</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-[#2c241b] mb-2">5. Legenda v Parku</h3>
+                        <p class="text-sm text-gray-600 mb-4">Turki, ognjeni konji in eksotična drevesa.</p>
+                        <div class="border-t border-gray-200 pt-4">
+                            <span class="text-xs font-bold text-[#8b5a2b] uppercase">Tehnologija:</span>
+                            <p class="text-xs text-gray-500 mt-1">AI identifikacija dreves + Animirana sekvenca legende.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Implementation & Strategy Section -->
+    <section id="izvedba" class="py-20 bg-[#f7f5eb]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <!-- Left: Budget/Hours Chart -->
+                <div>
+                    <h2 class="text-3xl font-serif font-bold text-[#2c241b] mb-6">Ocena Investicije (Ure)</h2>
+                    <p class="text-gray-600 mb-8 text-sm">
+                        Distribucija dela za "Premium" izvedbo modela Zois/HopGuides. Skupaj ocenjeno: <span
+                            class="font-bold text-[#8b5a2b]">480 ur</span>.
+                    </p>
+                    <div class="chart-container bg-white p-4 rounded-xl shadow-sm">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                    <div class="mt-6 text-sm text-gray-500">
+                        *Opomba: Največji delež predstavlja 3D rekonstrukcija in video produkcija zaradi trenutnega
+                        stanja prenove.
+                    </div>
+                </div>
+
+                <!-- Right: Strategic Positioning -->
+                <div>
+                    <h2 class="text-3xl font-serif font-bold text-[#2c241b] mb-6">Strateška Umestitev</h2>
+                    <p class="text-gray-600 mb-8 text-sm">
+                        Jelšingrad ustvarja turistično os "Barok – Orient", ki Šmarje pri Jelšah postavlja na zemljevid
+                        kot destinacijo dvojnosti.
+                    </p>
+
+                    <!-- Comparison Table/Graphic -->
+                    <div class="space-y-4">
+                        <div
+                            class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border-l-4 border-gray-400">
+                            <div class="text-left w-1/3">
+                                <span class="block text-xs uppercase text-gray-500">Obstoječe</span>
+                                <span class="font-bold text-[#2c241b]">Muzej Baroka</span>
+                            </div>
+                            <div
+                                class="text-center w-1/3 text-xs font-bold bg-gray-100 py-1 rounded-full text-gray-600">
+                                VS</div>
+                            <div class="text-right w-1/3">
+                                <span class="block text-xs uppercase text-[#c5a059]">Novo</span>
+                                <span class="font-bold text-[#8b5a2b]">Jelšingrad</span>
+                            </div>
+                        </div>
+
+                        <!-- Attribute 1 -->
+                        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 text-sm">
+                            <span class="w-1/3 text-gray-600">Katoliška tradicija</span>
+                            <span class="w-1/3 text-center text-xs text-gray-400">TEMA</span>
+                            <span class="w-1/3 text-right font-medium text-[#2c241b]">Islamska eksotika</span>
+                        </div>
+                        <!-- Attribute 2 -->
+                        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 text-sm">
+                            <span class="w-1/3 text-gray-600">Red in disciplina</span>
+                            <span class="w-1/3 text-center text-xs text-gray-400">VREDNOTE</span>
+                            <span class="w-1/3 text-right font-medium text-[#2c241b]">Užitek in misterij</span>
+                        </div>
+                        <!-- Attribute 3 -->
+                        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 text-sm">
+                            <span class="w-1/3 text-gray-600">Romarji, Seniorji</span>
+                            <span class="w-1/3 text-center text-xs text-gray-400">PUBLIKA</span>
+                            <span class="w-1/3 text-right font-medium text-[#2c241b]">Raziskovalci, Gen Z</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-[#8b5a2b] text-white p-6 rounded-lg shadow-lg">
+                        <h4 class="font-bold text-lg mb-2">Zaključek Študije</h4>
+                        <p class="text-sm opacity-90">
+                            Digitalna vsebina ni le dodatek. Je orodje, s katerim "prodamo" končni izgled dvorca že
+                            danes, medtem ko obnova še poteka.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#2c241b] text-[#e5e2d9] py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0">
+                <span class="text-2xl font-serif font-bold">Jelšingrad<span
+                        class="text-[#c5a059]">.Digital</span></span>
+                <p class="text-xs mt-2 text-gray-400 max-w-xs">Na podlagi projektne raziskave za "Dvorec Jelšingrad" v
+                    stilu case studyja Zois.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="hover:text-[#c5a059] transition-colors">Pitch Deck</a>
+                <a href="#" class="hover:text-[#c5a059] transition-colors">Tehnična Dokumentacija</a>
+                <a href="#" class="hover:text-[#c5a059] transition-colors">Kontakt</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Navigation Logic ---
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- History Timeline Logic ---
+        const historyData = {
+            '1424': {
+                title: '1424: Erlach - Srednjeveški Začetki',
+                desc: 'Prva omemba dvorca pod ledinskim imenom Erlach (jelše). Sprva fevd Celjskih grofov, kasneje deželnoknežja posest. Leta 1490 se omenja slovenska oblika "Jelsche".'
+            },
+            '1666': {
+                title: '1666: Baročna Transformacija',
+                desc: 'Po opustošenju v kmečkem uporu (1635) posest prevzame baron Žiga Gaisruck. Dvor postane reprezentančen baročni dvorec z osrednjo avlo in nastavki za park, ki definira današnji tloris.'
+            },
+            '1845': {
+                title: '1845–1860: Orientalska Vizija',
+                desc: 'Rudolf Oskar Gödel, diplomat na Bližnjem vzhodu (Egipt, Bejrut), začne prenovo z arhitektom Franzem Stichlom. Dodani so mavrski loki, poligonalni stolpi in polmeseci. Dvorec postane "muzej" orientalskih spominov.'
+            },
+            '2022': {
+                title: '2022: Novo Upalno Obdobje',
+                desc: 'Občina Šmarje pri Jelšah postane edina lastnica. S pomočjo Ministrstva za kulturo (1,6 mio €) se začne prenova strehe, fasade in parka. Čas za digitalno interpretacijo.'
+            }
+        };
+
+        function updateDetail(year) {
+            const detailBox = document.getElementById('history-detail');
+            const title = document.getElementById('detail-title');
+            const desc = document.getElementById('detail-desc');
+
+            // Hide first to create transition
+            detailBox.style.opacity = '0';
+            detailBox.style.height = '0';
+
+            setTimeout(() => {
+                title.textContent = historyData[year].title;
+                desc.textContent = historyData[year].desc;
+
+                // Show
+                detailBox.style.height = 'auto'; // allow expansion
+                detailBox.style.padding = '1.5rem';
+                detailBox.style.opacity = '1';
+            }, 300);
+        }
+
+        // --- Persona Card Flip Logic ---
+        function flipCard() {
+            const cardFront = document.getElementById('card-front');
+            const cardBack = document.getElementById('card-back');
+            const card = document.getElementById('persona-card');
+
+            if (cardBack.style.opacity === '1') {
+                // Flip to Front
+                card.style.transform = 'rotateY(0deg)';
+                setTimeout(() => {
+                    cardBack.style.opacity = '0';
+                    cardBack.style.pointerEvents = 'none';
+                    cardFront.style.opacity = '1';
+                    cardFront.style.pointerEvents = 'auto';
+                }, 200);
+            } else {
+                // Flip to Back
+                card.style.transform = 'rotateY(180deg)';
+                setTimeout(() => {
+                    cardFront.style.opacity = '0';
+                    cardFront.style.pointerEvents = 'none';
+                    cardBack.style.opacity = '1';
+                    cardBack.style.pointerEvents = 'auto';
+                }, 200);
+            }
+        }
+
+        // --- Chart.js Implementation for Budget ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+
+            const budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Video & 3D Produkcija', 'Avdio Produkcija', 'Raziskava & Scenarij', 'Programiranje'],
+                    datasets: [{
+                        data: [220, 100, 80, 80], // Data from source report
+                        backgroundColor: [
+                            '#8b5a2b', // Video - Dark Brown (Primary)
+                            '#c5a059', // Audio - Gold
+                            '#e5e2d9', // Research - Stone
+                            '#2c241b'  // Dev - Very Dark
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Lato', sans-serif",
+                                    size: 12
+                                },
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Struktura Dela (ure)',
+                            font: {
+                                family: "'Playfair Display', serif",
+                                size: 16
+                            },
+                            color: '#2c241b',
+                            padding: {
+                                bottom: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw + ' ur';
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

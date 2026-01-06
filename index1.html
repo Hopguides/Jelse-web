@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energijska pot Svete gore – Projektna Vizualizacija</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #fafaf9;
+            /* stone-50 */
+            color: #44403c;
+            /* stone-700 */
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        .active-tab {
+            background-color: #a8a29e;
+            /* stone-400 */
+            color: white;
+            border-bottom: 3px solid #78350f;
+            /* amber-900 */
+        }
+
+        .inactive-tab {
+            background-color: white;
+            color: #78716c;
+            /* stone-500 */
+        }
+
+        .timeline-point::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 6px;
+            width: 16px;
+            height: 16px;
+            background-color: #d97706;
+            /* amber-600 */
+            border-radius: 50%;
+            border: 3px solid #fafaf9;
+        }
+    </style>
+    <!-- Chosen Palette: Warm Heritage (Stone, Amber, Earthy Browns) to reflect the sacred/historical nature of Svete gore. Minimalistic and calm. -->
+
+    <!-- Application Structure Plan:
+        1. Hero Section: Emotional hook and clear project title.
+        2. Executive Summary (The Concept): Overview of the digital transformation.
+        3. Interactive Product Showcase (The 4 Paths): Allows users to explore the core content offerings (Tabs).
+        4. Financial & Strategic Analysis (Charts): Budget breakdown and projected impact (ROI).
+        5. Scoring Simulator: Visualizing how the project hits tender criteria.
+        6. Timeline & Action Plan: Roadmap to 2027.
+        Why: This structure moves from the "Vision" (Emotional) to the "Product" (Tangible) to the "Business Case" (Rational), mimicking a pitch flow for decision makers.
+   -->
+
+
+    <!-- Visualization & Content Choices:
+        1. Budget Distribution -> Goal: Inform -> Doughnut Chart (Chart.js) -> Shows clear allocation of funds (Dev vs. Digitalization vs. Invest).
+        2. Visitor Growth -> Goal: Compare/Impact -> Bar Chart (Chart.js) -> Visualizes the 40% target increase.
+        3. Thematic Paths -> Goal: Organize/Explore -> Interactive Tabs (JS) -> Allows focused reading on each path without clutter.
+        4. Tender Scoring -> Goal: Inform/Verify -> CSS Progress Bars -> Simple visual check of project viability against requirements.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+   -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+
+<body class="bg-stone-50 text-stone-800 antialiased">
+
+
+    <!-- Navigation / Header -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-xl font-bold text-amber-900">Energijska Pot</span>
+                </div>
+                <div class="hidden sm:flex space-x-8">
+                    <a href="#vizija"
+                        class="text-stone-600 hover:text-amber-700 px-3 py-2 rounded-md text-sm font-medium">Vizija</a>
+                    <a href="#dozivetja"
+                        class="text-stone-600 hover:text-amber-700 px-3 py-2 rounded-md text-sm font-medium">Doživetja</a>
+                    <a href="#analiza"
+                        class="text-stone-600 hover:text-amber-700 px-3 py-2 rounded-md text-sm font-medium">Analiza</a>
+                    <a href="#razpis"
+                        class="text-stone-600 hover:text-amber-700 px-3 py-2 rounded-md text-sm font-medium">Razpis</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <header class="relative bg-stone-800 text-white overflow-hidden">
+        <div
+            class="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1518182170546-07fa6ee3a918?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center">
+        </div>
+        <div class="relative max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+            <h1 class="text-4xl md:text-6xl font-serif font-bold tracking-tight text-amber-50 mb-4">
+                Energijska pot Svete gore
+            </h1>
+            <p class="text-xl md:text-2xl text-stone-200 max-w-3xl font-light mb-8">
+                Interaktivna digitalna romarska doživetja – Kjer se dediščina sreča s prihodnostjo.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="document.getElementById('vizija').scrollIntoView({behavior: 'smooth'})"
+                    class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full transition shadow-lg">
+                    Razišči Projekt
+                </button>
+            </div>
+            <div class="mt-8 text-sm text-stone-400">
+                Priprava na razpis MGRT: "Vlaganja v razvoj celovitih turističnih produktov"
+            </div>
+        </div>
+    </header>
+
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+
+        <!-- SECTION 1: Vizija & Koncept -->
+        <section id="vizija" class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl font-bold text-stone-800 mb-6 border-l-4 border-amber-600 pl-4">Vizija Projekta</h2>
+                <p class="text-lg text-stone-600 mb-4">
+                    Ta razdelek predstavlja strateško jedro projekta. Občina Bistrica ob Sotli ima priložnost, da bogato
+                    sakralno in arheološko dediščino pretvori v sodoben turistični produkt, ki deluje 24/7.
+                </p>
+                <p class="text-stone-600 mb-6">
+                    Projekt nadgrajuje obstoječo infrastrukturo z napredno tehnologijo (AI, AR/VR), s čimer nagovarja
+                    sodobnega turista in romarja ter zagotavlja dolgoročno ohranitev dediščine.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                        <div class="text-2xl mb-2 text-amber-700">&#9881;</div> <!-- Gear Icon -->
+                        <h3 class="font-bold text-stone-800">Tehnologija</h3>
+                        <p class="text-sm text-stone-500">PWA aplikacija, AI vodnica, 3D modeli.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                        <div class="text-2xl mb-2 text-amber-700">&#10024;</div> <!-- Sparkles Icon -->
+                        <h3 class="font-bold text-stone-800">Dediščina</h3>
+                        <p class="text-sm text-stone-500">15 točk kulturne dediščine, legende.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                        <div class="text-2xl mb-2 text-amber-700">&#127757;</div> <!-- Globe Icon -->
+                        <h3 class="font-bold text-stone-800">Trajnost</h3>
+                        <p class="text-sm text-stone-500">Brezpapirno, zeleni turizem, e-vodniki.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                        <div class="text-2xl mb-2 text-amber-700">&#128200;</div> <!-- Chart Icon -->
+                        <h3 class="font-bold text-stone-800">Rast</h3>
+                        <p class="text-sm text-stone-500">Cilj: +40 % obiskovalcev.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-stone-100 rounded-xl p-8 relative overflow-hidden shadow-inner">
+                <h3 class="text-xl font-bold text-stone-700 mb-4">Ključni Element: AI Vodnica</h3>
+                <div class="bg-white rounded-lg p-6 shadow-md border-l-4 border-purple-800">
+                    <h4 class="font-serif text-lg font-bold text-purple-900 mb-2">Grofica Dietrichstein</h4>
+                    <p class="italic text-stone-600 mb-4">
+                        "Pozdravljeni, romarji. Jaz sem vaša večna spremljevalka skozi stoletja Svetih gor..."
+                    </p>
+                    <ul class="text-sm text-stone-600 space-y-2">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">&#10003;</span> 4 Jeziki (SLO,
+                            ANG, NEM, HR)</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">&#10003;</span> Pripovedovanje
+                            legend (Storytelling)</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">&#10003;</span> Interaktivni
+                            kvizi za otroke</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">&#10003;</span> Navigacija po
+                            poti</li>
+                    </ul>
+                </div>
+                <div
+                    class="absolute -bottom-10 -right-10 text-9xl text-stone-200 opacity-50 select-none pointer-events-none">
+                    &#9813; <!-- Chess Queen or similar royal symbol -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 2: 4 Thematic Paths (Interactive) -->
+        <section id="dozivetja" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 md:p-10">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <h2 class="text-3xl font-bold text-stone-800 mb-4">Štiri Poti, Ena Destinacija</h2>
+                <p class="text-stone-600">
+                    Sistem 4 digitalnih poti omogoča razpršitev obiskovalcev in prilagojeno izkušnjo glede na interese.
+                    Spodaj raziščite vsebino posamezne poti, ki jo bomo digitalizirali.
+                </p>
+            </div>
+
+
+            <!-- Tabs Navigation -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8" role="tablist">
+                <button onclick="switchTab('romarska')" id="btn-romarska"
+                    class="active-tab px-6 py-3 rounded-t-lg font-semibold transition shadow-sm w-full sm:w-auto">
+                    &#10013; Romarska energija
+                </button>
+                <button onclick="switchTab('srednjeveska')" id="btn-srednjeveska"
+                    class="inactive-tab px-6 py-3 rounded-t-lg font-semibold transition hover:bg-stone-50 shadow-sm w-full sm:w-auto">
+                    &#9820; Srednjeveške skrivnosti
+                </button>
+                <button onclick="switchTab('trska')" id="btn-trska"
+                    class="inactive-tab px-6 py-3 rounded-t-lg font-semibold transition hover:bg-stone-50 shadow-sm w-full sm:w-auto">
+                    &#127969; Trška dediščina
+                </button>
+                <button onclick="switchTab('naravna')" id="btn-naravna"
+                    class="inactive-tab px-6 py-3 rounded-t-lg font-semibold transition hover:bg-stone-50 shadow-sm w-full sm:w-auto">
+                    &#127795; Naravna pot
+                </button>
+            </div>
+
+
+            <!-- Tab Content -->
+            <div id="content-romarska"
+                class="tab-content bg-stone-50 p-6 rounded-lg border border-stone-200 min-h-[300px]">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-serif text-amber-800 mb-4">Pot duhovnosti in miru</h3>
+                        <p class="text-stone-700 mb-4">
+                            Osrednja pot projekta, ki povezuje prastaro romarsko središče Svete gore. Digitalizacija bo
+                            romarjem omogočila vpogled v zgodovino kapelic in cerkva, tudi ko so te fizično zaprte.
+                        </p>
+                        <h4 class="font-bold text-stone-800 mt-4">Ključne točke (POI):</h4>
+                        <ul class="list-disc list-inside text-stone-600 space-y-1 ml-2">
+                            <li>Cerkev Matere Božje (3D ogled notranjosti)</li>
+                            <li>Kapela sv. Jurija in sv. Martina</li>
+                            <li>Lurška jama</li>
+                        </ul>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-inner flex flex-col justify-center items-center text-center">
+                        <span class="text-4xl mb-4">&#128241;</span>
+                        <h4 class="font-bold text-stone-800 mb-2">Digitalna Nadgradnja</h4>
+                        <p class="text-sm text-stone-600">
+                            "AR oživitev fresk in zvočni posnetki starodavnih molitev ter pesmi v 4 jezikih."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="content-srednjeveska"
+                class="tab-content hidden bg-stone-50 p-6 rounded-lg border border-stone-200 min-h-[300px]">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-serif text-stone-800 mb-4">Ruševine pripovedujejo</h3>
+                        <p class="text-stone-700 mb-4">
+                            Pot za ljubitelje zgodovine in arheologije. Poudarek je na gradu Kunšperk in strateškem
+                            pomenu območja v srednjem veku.
+                        </p>
+                        <h4 class="font-bold text-stone-800 mt-4">Ključne točke (POI):</h4>
+                        <ul class="list-disc list-inside text-stone-600 space-y-1 ml-2">
+                            <li>Ruševine gradu Kunšperk</li>
+                            <li>Cerkev sv. Petra</li>
+                            <li>Arheološka najdišča</li>
+                        </ul>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-inner flex flex-col justify-center items-center text-center">
+                        <span class="text-4xl mb-4">&#128083;</span>
+                        <h4 class="font-bold text-stone-800 mb-2">VR Rekonstrukcija</h4>
+                        <p class="text-sm text-stone-600">
+                            "Pogled skozi telefon prikaže grad Kunšperk v njegovi nekdanji veličini (VR overlay na
+                            kamero)."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="content-trska"
+                class="tab-content hidden bg-stone-50 p-6 rounded-lg border border-stone-200 min-h-[300px]">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-serif text-stone-800 mb-4">Utrip starega trga</h3>
+                        <p class="text-stone-700 mb-4">
+                            Sprehod skozi trško jedro Bistrice ob Sotli, kjer vsaka hiša skriva zgodbo. Povezovanje z
+                            lokalno kulinariko in obrtjo.
+                        </p>
+                        <h4 class="font-bold text-stone-800 mt-4">Ključne točke (POI):</h4>
+                        <ul class="list-disc list-inside text-stone-600 space-y-1 ml-2">
+                            <li>Trško jedro</li>
+                            <li>Stare trške hiše z arhitekturnimi detajli</li>
+                            <li>Spomeniki lokalnih veljakov</li>
+                        </ul>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-inner flex flex-col justify-center items-center text-center">
+                        <span class="text-4xl mb-4">&#127860;</span>
+                        <h4 class="font-bold text-stone-800 mb-2">Lokalna Ponudba</h4>
+                        <p class="text-sm text-stone-600">
+                            "Integracija z lokalnimi gostilnami – digitalni kuponi za romarsko malico."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="content-naravna"
+                class="tab-content hidden bg-stone-50 p-6 rounded-lg border border-stone-200 min-h-[300px]">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-serif text-stone-800 mb-4">Zeleni objem Sotle</h3>
+                        <p class="text-stone-700 mb-4">
+                            Povezava kulturne dediščine z naravno. Spodbujanje aktivnega turizma in pohodništva v
+                            neokrnjeni naravi.
+                        </p>
+                        <h4 class="font-bold text-stone-800 mt-4">Ključne točke (POI):</h4>
+                        <ul class="list-disc list-inside text-stone-600 space-y-1 ml-2">
+                            <li>Dolina reke Sotle</li>
+                            <li>Gozdne učne poti</li>
+                            <li>Razgledne točke na Svete gore</li>
+                        </ul>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-lg shadow-inner flex flex-col justify-center items-center text-center">
+                        <span class="text-4xl mb-4">&#127811;</span>
+                        <h4 class="font-bold text-stone-800 mb-2">Slovenia Green</h4>
+                        <p class="text-sm text-stone-600">
+                            "Promocija trajnostnega vedenja in 'leave no trace' principov skozi aplikacijo."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 3: Analiza (Charts) -->
+        <section id="analiza" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Intro Text for Section -->
+            <div class="lg:col-span-2 text-center max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-stone-800 mb-4">Finančna in Strateška Analiza</h2>
+                <p class="text-stone-600">
+                    Transparenten prikaz porabe sredstev in pričakovanih učinkov. Projekt je zasnovan tako, da maksimira
+                    točke na razpisu in zagotavlja dolgoročno ekonomsko vzdržnost.
+                </p>
+            </div>
+
+
+            <!-- Chart 1: Budget -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <h3 class="text-lg font-bold text-stone-800 mb-2 text-center">Struktura Proračuna (230.000 €)</h3>
+                <p class="text-xs text-stone-500 text-center mb-6">Uravnoteženost med razvojem vsebine in tehnologijo
+                </p>
+                <div class="chart-container">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+                <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-stone-600">
+                    <div><strong>40%</strong><br>Razvoj Produktov</div>
+                    <div><strong>40%</strong><br>Digitalizacija</div>
+                    <div><strong>20%</strong><br>Investicije</div>
+                </div>
+            </div>
+
+
+            <!-- Chart 2: Goals -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <h3 class="text-lg font-bold text-stone-800 mb-2 text-center">Cilji Obiska</h3>
+                <p class="text-xs text-stone-500 text-center mb-6">Projekcija rasti obiska po implementaciji (Leto 1)
+                </p>
+                <div class="chart-container">
+                    <canvas id="impactChart"></canvas>
+                </div>
+                <div class="mt-4 text-center text-sm text-stone-600 bg-stone-50 p-3 rounded">
+                    <strong>KPI:</strong> Povečanje obiska sakralnih znamenitosti za <span
+                        class="text-green-600 font-bold">40%</span>.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 4: Razpis (Scoring) -->
+        <section id="razpis" class="bg-stone-800 text-white rounded-2xl p-8 md:p-12">
+            <h2 class="text-3xl font-serif mb-8 border-b border-stone-600 pb-4">Pot do 90+ Točk</h2>
+            <div class="space-y-6">
+
+                <!-- Criteria 1 -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium text-amber-100">Kakovost projekta (Dediščina & Zgodba)</span>
+                        <span class="text-sm font-medium text-amber-100">35/35</span>
+                    </div>
+                    <div class="w-full bg-stone-700 rounded-full h-4">
+                        <div class="bg-amber-500 h-4 rounded-full" style="width: 100%"></div>
+                    </div>
+                    <p class="text-xs text-stone-400 mt-1">Močna povezava z dediščino, vključenost 5+ deležnikov,
+                        celoletna dostopnost.</p>
+                </div>
+
+
+                <!-- Criteria 2 -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium text-amber-100">Skladnost s strategijo</span>
+                        <span class="text-sm font-medium text-amber-100">20/20</span>
+                    </div>
+                    <div class="w-full bg-stone-700 rounded-full h-4">
+                        <div class="bg-amber-500 h-4 rounded-full" style="width: 100%"></div>
+                    </div>
+                    <p class="text-xs text-stone-400 mt-1">Desezonalizacija, digitalizacija, trajnost, Slovenia Green
+                        partnerstvo.</p>
+                </div>
+
+
+                <!-- Criteria 3 -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium text-amber-100">Prispevek k poslovnemu okolju</span>
+                        <span class="text-sm font-medium text-amber-100">23/25</span>
+                    </div>
+                    <div class="w-full bg-stone-700 rounded-full h-4">
+                        <div class="bg-amber-500 h-4 rounded-full" style="width: 92%"></div>
+                    </div>
+                    <p class="text-xs text-stone-400 mt-1">Konkreten prodajni plan, 3D/VR tehnologije, promocijski
+                        video.</p>
+                </div>
+
+
+                <!-- Criteria 4 -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium text-amber-100">Realnost izvedbe & Regionalni kriterij</span>
+                        <span class="text-sm font-medium text-amber-100">25/25</span>
+                    </div>
+                    <div class="w-full bg-stone-700 rounded-full h-4">
+                        <div class="bg-amber-500 h-4 rounded-full" style="width: 100%"></div>
+                    </div>
+                    <p class="text-xs text-stone-400 mt-1">Realen terminski plan, problemsko območje (Obsotelje).</p>
+                </div>
+
+
+            </div>
+        </section>
+
+
+        <!-- SECTION 5: Timeline -->
+        <section class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-stone-800 mb-8 text-center">Časovnica Izvedbe (12 Mesecev)</h2>
+            <div class="relative border-l-4 border-stone-200 ml-6 space-y-10">
+
+                <div class="ml-8 relative timeline-point">
+                    <h4 class="font-bold text-lg text-stone-800">Mesec 1-3: Priprava in Dokumentacija</h4>
+                    <p class="text-stone-600 text-sm">Pridobivanje soglasij ZVKDS, PZI dokumentacija, formiranje delovne
+                        skupine.</p>
+                </div>
+
+
+                <div class="ml-8 relative timeline-point">
+                    <h4 class="font-bold text-lg text-stone-800">Mesec 4-8: Razvoj in Digitalizacija</h4>
+                    <p class="text-stone-600 text-sm">Izdelava 3D modelov (Svete gore, Kunšperk), razvoj AI vodnice,
+                        programiranje aplikacije.</p>
+                </div>
+
+
+                <div class="ml-8 relative timeline-point">
+                    <h4 class="font-bold text-lg text-stone-800">Mesec 9-10: Vsebina in Oprema</h4>
+                    <p class="text-stone-600 text-sm">Snemanje zvočnih vodnikov, postavitev QR tabel, urejanje poti.</p>
+                </div>
+
+
+                <div class="ml-8 relative timeline-point">
+                    <h4 class="font-bold text-lg text-stone-800">Mesec 11-12: Testiranje in Promocija</h4>
+                    <p class="text-stone-600 text-sm">Beta testiranje, lansiranje kampanje, integracija v booking
+                        sisteme.</p>
+                </div>
+
+
+            </div>
+        </section>
+
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h3 class="text-xl text-white font-serif mb-4">Energijska pot Svete gore</h3>
+            <p class="mb-6 max-w-xl mx-auto text-sm">
+                Projektna ideja za Občino Bistrica ob Sotli. Pripravljeno za razpis MGRT 2026.
+            </p>
+            <div class="text-xs">
+                &copy; 2026 Občina Bistrica ob Sotli (Idejna zasnova). Vse pravice pridržane.
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Handling
+        const budgetData = {
+            labels: ['Razvoj produktov (92k)', 'Digitalizacija (92k)', 'Investicije (46k)'],
+            data: [40, 40, 20],
+            colors: ['#d97706', '#78350f', '#57534e'] // amber-600, amber-900, stone-600
+        };
+
+
+        const impactData = {
+            labels: ['Obstoječi obisk', 'Leto 1 (Cilj)', 'Leto 2 (Projekcija)'],
+            data: [10000, 14000, 16000], // Hypothetical baseline based on +40% goal
+            backgroundColor: ['#e7e5e4', '#d97706', '#92400e']
+        };
+
+
+        // Chart Initialization
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // 1. Budget Doughnut Chart
+            const ctxBudget = document.getElementById('budgetChart').getContext('2d');
+            new Chart(ctxBudget, {
+                type: 'doughnut',
+                data: {
+                    labels: budgetData.labels,
+                    datasets: [{
+                        data: budgetData.data,
+                        backgroundColor: budgetData.colors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: "'Lato', sans-serif" },
+                                color: '#44403c'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return ` ${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            // 2. Impact Bar Chart
+            const ctxImpact = document.getElementById('impactChart').getContext('2d');
+            new Chart(ctxImpact, {
+                type: 'bar',
+                data: {
+                    labels: impactData.labels,
+                    datasets: [{
+                        label: 'Število obiskovalcev',
+                        data: impactData.data,
+                        backgroundColor: impactData.backgroundColor,
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f5f5f4' },
+                            ticks: { font: { family: "'Lato', sans-serif" } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: "'Lato', sans-serif" } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let val = context.raw;
+                                    let growth = '';
+                                    if (context.dataIndex === 1) growth = ' (+40%)';
+                                    return ` Obiskovalci: ${val}${growth}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Deactivate all buttons
+            const buttons = ['romarska', 'srednjeveska', 'trska', 'naravna'];
+            buttons.forEach(btn => {
+                const el = document.getElementById(`btn-${btn}`);
+                el.classList.remove('active-tab');
+                el.classList.add('inactive-tab');
+            });
+
+
+            // Show selected content
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+
+            // Activate selected button
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            activeBtn.classList.remove('inactive-tab');
+            activeBtn.classList.add('active-tab');
+        }
+
+
+    </script>
+</body>
+
+</html>

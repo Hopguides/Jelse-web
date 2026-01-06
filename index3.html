@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beltinski Zakladi – Digitalna Pot</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+
+    <!-- Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'heritage-cream': '#F5F2EA',
+                        'heritage-gold': '#D4AF37',
+                        'zichy-burgundy': '#722F37',
+                        'park-green': '#4A6C44',
+                        'stone-gray': '#E5E7EB',
+                        'text-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+
+    <style>
+        body {
+            background-color: #F5F2EA;
+            /* Heritage Cream background */
+            color: #1F2937;
+        }
+
+
+        /* Chart Container Strict Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+
+        /* Custom Scrollbar for Chat */
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #D4AF37;
+            border-radius: 4px;
+        }
+
+
+        /* Interactive Card Hover */
+        .interactive-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .nav-item.active {
+            border-bottom: 3px solid #722F37;
+            color: #722F37;
+            font-weight: 700;
+        }
+    </style>
+
+
+    <!-- Placeholder Comments Required by Prompt -->
+    <!-- Chosen Palette: Heritage & Nobility (Warm Neutrals, Burgundy for Zichy family, Gold for treasures, Park Green) -->
+    <!-- Application Structure Plan: The app is designed as an interactive "Project Pitch Deck" for stakeholders.
+        1. "Vizija" (Vision): Hooks the user with the core concept and emotional appeal.
+        2. "Doživetje" (Experience): Explains the product (Routes, AI, AR/VR) interactively.
+        3. "Strategija" (Strategy): Visualizes the budget, scoring criteria, and goals using charts.
+        4. "Izvedba" (Execution): A timeline and stakeholder map.
+        This structure moves from "Why" -> "What" -> "How" -> "When", mirroring a decision-making process. -->
+    <!-- Visualization & Content Choices:
+        - Vision: Text & Hero styling. Goal: Emotional engagement.
+        - Routes: Interactive Grid. Goal: Show content depth without clutter.
+        - AI Guide: JS Simulated Chat interface. Goal: Demo the "Virtual Guide" concept directly.
+        - Budget: Chart.js Doughnut. Goal: Clear breakdown of the 230k EUR.
+        - Scoring: Chart.js Radar. Goal: Visual proof of meeting the 90+ point target.
+        - Impact: Bar Chart. Goal: Compare current vs. future metrics.
+        - Timeline: CSS Flexbox Process Flow. Goal: Show feasibility.
+        -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+
+<body class="font-sans antialiased selection:bg-zichy-burgundy selection:text-white">
+
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-serif text-2xl text-zichy-burgundy font-bold">Beltinski Zakladi</span>
+                </div>
+                <div class="flex space-x-8 items-center hidden md:flex">
+                    <button onclick="switchView('vizija')" id="nav-vizija"
+                        class="nav-item active px-3 py-2 text-sm font-medium text-gray-700 hover:text-zichy-burgundy transition">Vizija</button>
+                    <button onclick="switchView('dozivetje')" id="nav-dozivetje"
+                        class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-zichy-burgundy transition">Doživetje
+                        & AI</button>
+                    <button onclick="switchView('strategija')" id="nav-strategija"
+                        class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-zichy-burgundy transition">Analiza
+                        & Proračun</button>
+                    <button onclick="switchView('izvedba')" id="nav-izvedba"
+                        class="nav-item px-3 py-2 text-sm font-medium text-gray-700 hover:text-zichy-burgundy transition">Načrt
+                        Izvedbe</button>
+                </div>
+                <!-- Mobile menu button (simplified logic) -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+                        class="text-gray-600 hover:text-zichy-burgundy focus:outline-none">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <button onclick="switchView('vizija')"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Vizija</button>
+                <button onclick="switchView('dozivetje')"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Doživetje
+                    & AI</button>
+                <button onclick="switchView('strategija')"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Analiza
+                    & Proračun</button>
+                <button onclick="switchView('izvedba')"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Načrt
+                    Izvedbe</button>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
+
+
+        <!-- VIEW: VIZIJA (Vision) -->
+        <div id="view-vizija" class="view-section animate-fade-in">
+            <div class="text-center mb-12">
+                <h1 class="font-serif text-5xl md:text-6xl text-zichy-burgundy mb-4">Skrivnostni svet Beltincev</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Digitalna preobrazba kulturne dediščine v celovit turistični produkt. Povezujemo preteklost s
+                    prihodnostjo.
+                </p>
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="bg-white p-8 rounded-lg shadow-lg border-t-4 border-heritage-gold">
+                    <h2 class="font-serif text-2xl text-text-dark mb-4">O Projektu</h2>
+                    <p class="mb-4 text-gray-600 leading-relaxed">
+                        <strong>"Beltinski zakladi"</strong> je projektna ideja prilagojena za razpis MGRT (2026).
+                        Cilj je ustvariti digitalno pot skozi zgodovino, ki povezuje grad, cerkev sv. Ladislava, park in
+                        legendarne podzemne rove.
+                    </p>
+                    <div class="space-y-3 mt-6">
+                        <div class="flex items-start">
+                            <span class="text-zichy-burgundy text-xl mr-3">🏛</span>
+                            <div>
+                                <h3 class="font-bold text-gray-800">Bogata Dediščina</h3>
+                                <p class="text-sm text-gray-500">Grad, cerkev, arheološka najdišča.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-zichy-burgundy text-xl mr-3">📱</span>
+                            <div>
+                                <h3 class="font-bold text-gray-800">Sodobna Tehnologija</h3>
+                                <p class="text-sm text-gray-500">PWA aplikacija, AI vodnik, AR/VR izkušnje.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-zichy-burgundy text-xl mr-3">🌍</span>
+                            <div>
+                                <h3 class="font-bold text-gray-800">Desezonalizacija</h3>
+                                <p class="text-sm text-gray-500">Dostopno 24/7, 365 dni v letu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div
+                        class="bg-zichy-burgundy text-white p-6 rounded-lg shadow text-center flex flex-col justify-center items-center h-40 interactive-card">
+                        <span class="text-4xl font-serif mb-2">50%</span>
+                        <span class="text-sm uppercase tracking-wider">Cilj povečanja obiska</span>
+                    </div>
+                    <div
+                        class="bg-heritage-gold text-white p-6 rounded-lg shadow text-center flex flex-col justify-center items-center h-40 interactive-card">
+                        <span class="text-4xl font-serif mb-2">230k€</span>
+                        <span class="text-sm uppercase tracking-wider">Ocenjen proračun</span>
+                    </div>
+                    <div
+                        class="bg-park-green text-white p-6 rounded-lg shadow text-center flex flex-col justify-center items-center h-40 interactive-card">
+                        <span class="text-4xl font-serif mb-2">3</span>
+                        <span class="text-sm uppercase tracking-wider">Tematske poti</span>
+                    </div>
+                    <div
+                        class="bg-gray-800 text-white p-6 rounded-lg shadow text-center flex flex-col justify-center items-center h-40 interactive-card">
+                        <span class="text-4xl font-serif mb-2">12</span>
+                        <span class="text-sm uppercase tracking-wider">Točk (POI)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button onclick="switchView('dozivetje')"
+                    class="bg-zichy-burgundy hover:bg-red-900 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
+                    Razišči Digitalno Doživetje &rarr;
+                </button>
+            </div>
+        </div>
+
+
+        <!-- VIEW: DOŽIVETJE (Experience) -->
+        <div id="view-dozivetje" class="view-section hidden animate-fade-in">
+            <div class="mb-8 p-6 bg-white rounded-lg border-l-4 border-heritage-gold shadow-sm">
+                <h3 class="font-serif text-xl text-zichy-burgundy mb-2">Interaktivno Doživetje</h3>
+                <p class="text-gray-600">
+                    Osrednji del projekta je mobilna aplikacija z tremi tematskimi potmi. Uporabite spodnji vmesnik za
+                    raziskovanje poti in preizkusite <strong>AI Virtualno Vodnico</strong>, grofico Marijo Zichy.
+                </p>
+            </div>
+
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column: The 3 Paths -->
+                <div class="lg:col-span-2 space-y-6">
+                    <h2 class="font-serif text-2xl text-text-dark mb-4">3 Digitalne Tematske Poti</h2>
+
+                    <!-- Path 1 -->
+                    <div onclick="togglePathDetails('path1')"
+                        class="interactive-card bg-white p-6 rounded-xl shadow border border-gray-100 relative overflow-hidden group">
+                        <div
+                            class="absolute top-0 right-0 bg-zichy-burgundy text-white text-xs px-3 py-1 rounded-bl-lg font-bold">
+                            Zgodovina</div>
+                        <h3
+                            class="font-serif text-xl font-bold text-gray-800 mb-2 group-hover:text-zichy-burgundy transition">
+                            1. Plemiška zapuščina</h3>
+                        <p class="text-gray-600 mb-2">Odkrijte življenje grofov Zichy, dvorni protokol in grajske
+                            zbirke.</p>
+                        <div id="path1-details"
+                            class="hidden mt-4 pt-4 border-t border-gray-200 text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>POI:</strong> Grad Beltinci, Grajski park, Grobnica.</li>
+                                <li><strong>Tech:</strong> AR "oživitev" portretov v gradu.</li>
+                                <li><strong>Interakcija:</strong> Zbiranje digitalnih "plemiških pečatov".</li>
+                            </ul>
+                        </div>
+                        <div class="text-zichy-burgundy text-sm font-bold mt-2 cursor-pointer">Klikni za podrobnosti
+                            &darr;</div>
+                    </div>
+
+
+                    <!-- Path 2 -->
+                    <div onclick="togglePathDetails('path2')"
+                        class="interactive-card bg-white p-6 rounded-xl shadow border border-gray-100 relative overflow-hidden group">
+                        <div
+                            class="absolute top-0 right-0 bg-heritage-gold text-white text-xs px-3 py-1 rounded-bl-lg font-bold">
+                            Sakralno</div>
+                        <h3
+                            class="font-serif text-xl font-bold text-gray-800 mb-2 group-hover:text-heritage-gold transition">
+                            2. Sakralna skrivnost</h3>
+                        <p class="text-gray-600 mb-2">Cerkev sv. Ladislava in legenda o podzemnih rovih.</p>
+                        <div id="path2-details"
+                            class="hidden mt-4 pt-4 border-t border-gray-200 text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>POI:</strong> Cerkev, Kapele, Vhod v rove.</li>
+                                <li><strong>Tech:</strong> VR sprehod po nevarnih podzemnih rovih (varno doživetje).
+                                </li>
+                                <li><strong>Interakcija:</strong> Iskanje skritih simbolov na fasadi.</li>
+                            </ul>
+                        </div>
+                        <div class="text-heritage-gold text-sm font-bold mt-2 cursor-pointer">Klikni za podrobnosti
+                            &darr;</div>
+                    </div>
+
+
+                    <!-- Path 3 -->
+                    <div onclick="togglePathDetails('path3')"
+                        class="interactive-card bg-white p-6 rounded-xl shadow border border-gray-100 relative overflow-hidden group">
+                        <div
+                            class="absolute top-0 right-0 bg-park-green text-white text-xs px-3 py-1 rounded-bl-lg font-bold">
+                            Arheologija</div>
+                        <h3
+                            class="font-serif text-xl font-bold text-gray-800 mb-2 group-hover:text-park-green transition">
+                            3. Arheološki zakladi</h3>
+                        <p class="text-gray-600 mb-2">Od rimskih gomil do poselitve Prekmurja.</p>
+                        <div id="path3-details"
+                            class="hidden mt-4 pt-4 border-t border-gray-200 text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>POI:</strong> Rimske gomile, Arheološka najdišča.</li>
+                                <li><strong>Tech:</strong> 3D rekonstrukcija rimske naselbine na telefonu.</li>
+                                <li><strong>Interakcija:</strong> Geo-caching arheološki lov.</li>
+                            </ul>
+                        </div>
+                        <div class="text-park-green text-sm font-bold mt-2 cursor-pointer">Klikni za podrobnosti &darr;
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Right Column: AI Chat Simulator -->
+                <div class="lg:col-span-1">
+                    <div
+                        class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden flex flex-col h-[500px]">
+                        <div class="bg-zichy-burgundy p-4 flex items-center shadow-md">
+                            <div
+                                class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-zichy-burgundy font-bold text-xl border-2 border-heritage-gold">
+                                MZ
+                            </div>
+                            <div class="ml-3 text-white">
+                                <div class="font-bold text-sm">Grofica Marija Zichy (AI)</div>
+                                <div class="text-xs text-gray-200 opacity-80">Virtualna Vodnica • Online</div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Area -->
+                        <div id="chat-box" class="flex-1 bg-stone-50 p-4 overflow-y-auto chat-scroll space-y-3">
+                            <div class="flex items-start">
+                                <div
+                                    class="bg-white p-3 rounded-tr-lg rounded-br-lg rounded-bl-lg shadow-sm text-sm text-gray-800 border border-gray-100 max-w-[85%]">
+                                    Dobrodošli v Beltincih! Jaz sem grofica Marija. Kaj vas zanima o našem gradu ali
+                                    skrivnostnih rovih?
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Input Area -->
+                        <div class="p-3 bg-white border-t border-gray-200">
+                            <p class="text-xs text-gray-400 mb-2 text-center">Izberite vprašanje za demonstracijo:</p>
+                            <div class="flex flex-col space-y-2">
+                                <button onclick="simulateChat('rovi')"
+                                    class="text-xs bg-heritage-cream hover:bg-heritage-gold hover:text-white text-gray-700 py-2 px-3 rounded transition text-left border border-gray-200">
+                                    🗺️ Povej mi o podzemnih rovih.
+                                </button>
+                                <button onclick="simulateChat('legenda')"
+                                    class="text-xs bg-heritage-cream hover:bg-heritage-gold hover:text-white text-gray-700 py-2 px-3 rounded transition text-left border border-gray-200">
+                                    👻 Ali na gradu straši?
+                                </button>
+                                <button onclick="simulateChat('jezik')"
+                                    class="text-xs bg-heritage-cream hover:bg-heritage-gold hover:text-white text-gray-700 py-2 px-3 rounded transition text-left border border-gray-200">
+                                    🇭🇺 Beszélsz magyarul? (Govoriš madžarsko?)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- VIEW: STRATEGIJA (Analysis & Budget) -->
+        <div id="view-strategija" class="view-section hidden animate-fade-in">
+            <div class="mb-8 p-6 bg-white rounded-lg border-l-4 border-heritage-gold shadow-sm">
+                <h3 class="font-serif text-xl text-zichy-burgundy mb-2">Analiza in Proračun</h3>
+                <p class="text-gray-600">
+                    Podrobna razčlenitev financiranja, ocenjevanja uspešnosti na razpisu in pričakovanih turističnih
+                    učinkov. Podatki temeljijo na projektni oceni za razpis MGRT 2026.
+                </p>
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <!-- Budget Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Struktura Proračuna (230.000 €)</h3>
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-gray-500 mt-2">100% nepovratna sredstva. Max 50% za
+                        investicije/investicijsko vzdrževanje.</p>
+                </div>
+
+
+                <!-- Scoring Radar Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Analiza Točkovanja (Cilj: 90+/100)</h3>
+                    <div class="chart-container">
+                        <canvas id="scoringChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-gray-500 mt-2">Preseganje praga 60 točk z močnim poudarkom na
+                        kakovosti in strategiji.</p>
+                </div>
+            </div>
+
+
+            <!-- Impact Metrics (Bar Chart) -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Napoved Rasti Obiska</h3>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="impactChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- VIEW: IZVEDBA (Execution) -->
+        <div id="view-izvedba" class="view-section hidden animate-fade-in">
+            <div class="mb-8 p-6 bg-white rounded-lg border-l-4 border-park-green shadow-sm">
+                <h3 class="font-serif text-xl text-zichy-burgundy mb-2">Načrt Izvedbe</h3>
+                <p class="text-gray-600">
+                    Projekt je načrtovan za obdobje 12 mesecev z jasnimi mejniki. Prijavitelj ZTKŠ Beltinci sodeluje z
+                    Občino, Župnijo in zunanjimi strokovnjaki.
+                </p>
+            </div>
+
+
+            <div class="relative wrap overflow-hidden p-10 h-full">
+                <div class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border" style="left: 50%">
+                </div>
+
+                <!-- Timeline Item 1 -->
+                <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-heritage-gold shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto font-semibold text-lg text-white">1</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
+                        <h3 class="mb-2 font-bold text-gray-800 text-lg">Priprava (Mesec 1-2)</h3>
+                        <p class="text-sm text-gray-600">Formiranje delovne skupine, podpis pogodb s partnerji (Občina,
+                            Župnija), pridobivanje ZVKDS soglasij.</p>
+                    </div>
+                </div>
+
+
+                <!-- Timeline Item 2 -->
+                <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-zichy-burgundy shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto font-semibold text-lg text-white">2</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
+                        <h3 class="mb-2 font-bold text-gray-800 text-lg">Digitalizacija & Vsebina (Mesec 3-8)</h3>
+                        <p class="text-sm text-gray-600">3D skeniranje gradu/rovov, razvoj AI persone (Grofica Zichy),
+                            pisanje scenarijev za 3 poti, razvoj mobilne aplikacije.</p>
+                    </div>
+                </div>
+
+
+                <!-- Timeline Item 3 -->
+                <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-park-green shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto font-semibold text-lg text-white">3</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
+                        <h3 class="mb-2 font-bold text-gray-800 text-lg">Investicije na Terenu (Mesec 6-10)</h3>
+                        <p class="text-sm text-gray-600">Namestitev QR tabel na 12 točkah, urejanje klopi v parku,
+                            fizična označitev poti.</p>
+                    </div>
+                </div>
+
+
+                <!-- Timeline Item 4 -->
+                <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                    <div class="order-1 w-5/12"></div>
+                    <div class="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+                        <h1 class="mx-auto font-semibold text-lg text-white">4</h1>
+                    </div>
+                    <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
+                        <h3 class="mb-2 font-bold text-gray-800 text-lg">Lansiranje (Mesec 11-12)</h3>
+                        <p class="text-sm text-gray-600">Promocijska kampanja (video), usposabljanje lokalnih vodnikov,
+                            integracija v GetYourGuide/Slovenia.info.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 bg-heritage-cream p-8 rounded-xl text-center">
+                <h2 class="font-serif text-3xl text-zichy-burgundy mb-4">Naslednji koraki</h2>
+                <p class="mb-6 text-gray-700">Priprava popolne vloge in dogovor z lastniki objektov je ključen za uspeh.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <button
+                        class="bg-zichy-burgundy text-white px-6 py-3 rounded shadow hover:bg-gray-800 transition">Kontakt:
+                        ZTKŠ Beltinci</button>
+                    <button
+                        class="bg-white text-zichy-burgundy border border-zichy-burgundy px-6 py-3 rounded shadow hover:bg-gray-50 transition">Prenesi
+                        PDF Povzetek</button>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="font-serif text-lg text-heritage-gold mb-2">Beltinski Zakladi</p>
+            <p class="text-gray-400 text-sm">Idejna zasnova za razpis "Vlaganja v razvoj celovitih turističnih
+                produktov" (MGRT).</p>
+            <p class="text-gray-500 text-xs mt-4">&copy; 2026 Občina Beltinci / ZTKŠ</p>
+        </div>
+    </footer>
+
+
+    <!-- Scripts -->
+    <script>
+        // --- Navigation Logic ---
+        function switchView(viewId) {
+            // Hide all views
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(v => {
+                v.classList.add('hidden');
+            });
+
+
+            // Show selected view
+            const selected = document.getElementById('view-' + viewId);
+            if (selected) {
+                selected.classList.remove('hidden');
+                // Trigger chart resize if needed when becoming visible
+                window.dispatchEvent(new Event('resize'));
+            }
+
+
+            // Update Nav State
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(n => n.classList.remove('active'));
+            const activeNav = document.getElementById('nav-' + viewId);
+            if (activeNav) activeNav.classList.add('active');
+
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // --- Interactive Path Cards ---
+        function togglePathDetails(pathId) {
+            const details = document.getElementById(pathId + '-details');
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden');
+            } else {
+                details.classList.add('hidden');
+            }
+        }
+
+
+        // --- AI Chat Simulator Logic ---
+        const chatResponses = {
+            'rovi': "Podzemni rovi so ena največjih skrivnosti Beltincev! Legenda pravi, da so povezovali grad s cerkvijo sv. Ladislava, da so plemiči lahko varno hodili k maši. Z našo aplikacijo boste vstopili v virtualno rekonstrukcijo teh rovov. Si upate?",
+            'legenda': "Vsak stari grad ima svoje zgodbe. Pripovedujejo, da se v grajskem parku ob polni luni sliši šelestenje svilenih oblek. Morda sem to le jaz, ki pazim na svojo zapuščino. V aplikaciji vam bom razkrila še več skrivnosti...",
+            'jezik': "Igen, természetesen! (Da, seveda!) Kot plemkinja govorim tekoče več jezikov. Aplikacija bo na voljo v slovenščini, madžarščini, nemščini in angleščini, da se bodo vsi gostje počutili kot doma."
+        };
+
+
+        function simulateChat(topic) {
+            const chatBox = document.getElementById('chat-box');
+
+            // User Message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = "flex items-end justify-end";
+            let userText = "";
+            if (topic === 'rovi') userText = "Povej mi o podzemnih rovih.";
+            if (topic === 'legenda') userText = "Ali na gradu straši?";
+            if (topic === 'jezik') userText = "Beszélsz magyarul?";
+
+            userMsgDiv.innerHTML = `<div class="bg-heritage-gold text-white p-3 rounded-tl-lg rounded-tr-lg rounded-bl-lg shadow-sm text-sm max-w-[85%]">${userText}</div>`;
+            chatBox.appendChild(userMsgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+
+            // Simulate typing delay
+            setTimeout(() => {
+                const aiMsgDiv = document.createElement('div');
+                aiMsgDiv.className = "flex items-start animate-fade-in";
+                aiMsgDiv.innerHTML = `<div class="bg-white p-3 rounded-tr-lg rounded-br-lg rounded-bl-lg shadow-sm text-sm text-gray-800 border border-gray-100 max-w-[85%]">${chatResponses[topic]}</div>`;
+                chatBox.appendChild(aiMsgDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 800);
+        }
+
+
+        // --- Chart Initialization ---
+        document.addEventListener('DOMContentLoaded', function () {
+            initCharts();
+        });
+
+
+        function initCharts() {
+            // 1. Budget Breakdown (Doughnut)
+            const ctxBudget = document.getElementById('budgetChart').getContext('2d');
+            new Chart(ctxBudget, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Razvoj produktov (40%)', 'Digitalizacija (40%)', 'Investicije & Oprema (20%)'],
+                    datasets: [{
+                        data: [92000, 92000, 46000],
+                        backgroundColor: ['#722F37', '#D4AF37', '#4A6C44'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ' + context.raw.toLocaleString() + ' €';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            // 2. Scoring Radar Chart
+            const ctxScoring = document.getElementById('scoringChart').getContext('2d');
+            new Chart(ctxScoring, {
+                type: 'radar',
+                data: {
+                    labels: ['Kakovost Projekta', 'Skladnost s Strategijo', 'Poslovni Okolje', 'Realnost Izvedbe', 'Regionalni Kriterij'],
+                    datasets: [{
+                        label: 'Ciljne Točke',
+                        data: [33, 19, 23, 18, 5], // Conservative estimates aiming for >90
+                        fill: true,
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        borderColor: '#D4AF37',
+                        pointBackgroundColor: '#722F37',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#722F37'
+                    }, {
+                        label: 'Max Možne Točke',
+                        data: [35, 20, 25, 20, 5],
+                        fill: false,
+                        borderColor: '#E5E7EB',
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 35
+                        }
+                    }
+                }
+            });
+
+
+            // 3. Impact/Visitor Growth (Bar)
+            const ctxImpact = document.getElementById('impactChart').getContext('2d');
+            new Chart(ctxImpact, {
+                type: 'bar',
+                data: {
+                    labels: ['Trenutni Obisk (Letno)', 'Cilj 1. Leto (+50%)', 'Cilj 3. Leto'],
+                    datasets: [{
+                        label: 'Število Obiskovalcev (Ocena)',
+                        data: [12000, 18000, 25000], // Hypothetical base numbers for visualization context
+                        backgroundColor: ['#E5E7EB', '#722F37', '#D4AF37'],
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
